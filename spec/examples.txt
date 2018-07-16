@@ -1,0 +1,10 @@
+example_id                                             | status | run_time        |
+------------------------------------------------------ | ------ | --------------- |
+./spec/controllers/tasks_controller_spec.rb[1:1:1:1]   | passed | 0.00333 seconds |
+./spec/controllers/tasks_controller_spec.rb[1:1:1:2]   | passed | 0.00291 seconds |
+./spec/controllers/tasks_controller_spec.rb[1:1:2:1]   | passed | 0.00847 seconds |
+./spec/controllers/tasks_controller_spec.rb[1:1:2:2]   | passed | 0.05943 seconds |
+./spec/controllers/tasks_controller_spec.rb[1:1:2:3:1] | passed | 0.00831 seconds |
+./spec/models/task_spec.rb[1:1:1]                      | passed | 0.00817 seconds |
+./spec/models/task_spec.rb[1:2:1]                      | passed | 0.0043 seconds  |
+./spec/models/task_spec.rb[1:2:2]                      | passed | 0.00383 seconds |
