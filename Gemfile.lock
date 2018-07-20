@@ -80,6 +80,9 @@ GEM
       method_source (~> 0.9.0)
     pry-rails (0.3.6)
       pry (>= 0.10.4)
+    pry-remote (0.1.8)
+      pry (~> 0.9)
+      slop (~> 3.0)
     puma (3.11.4)
     rack (2.0.5)
     rack-test (1.0.0)
@@ -131,6 +134,7 @@ GEM
     rspec-support (3.7.1)
     shoulda-matchers (3.1.2)
       activesupport (>= 4.0.0)
+    slop (3.6.0)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -154,6 +158,7 @@ DEPENDENCIES
   factory_bot_rails
   pg (>= 0.18, < 2.0)
   pry-rails
+  pry-remote
   puma (~> 3.11)
   rails (~> 5.2.0)
   rspec-its

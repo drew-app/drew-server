@@ -14,8 +14,7 @@ group :development, :test do
   gem 'rspec-its'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
+  gem 'pry-rails'
+  gem 'pry-remote'
 end
 
-group :development do
-  gem 'pry-rails'
-end
