@@ -6,7 +6,7 @@ ruby '2.5.1'
 gem 'rails', '~> 5.2.0'
 gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 3.11'
-# gem 'rack-cors'
+gem 'rack-cors'
 
 group :development, :test do
   gem 'database_cleaner'
