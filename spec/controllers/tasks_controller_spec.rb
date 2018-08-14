@@ -5,10 +5,10 @@ RSpec.describe 'TasksController routing', type: :routing do
     expect(route).to_not be_routable
   end
 
-  it { expect( get('/api/tasks')).to route_to('tasks#index') }
-  it { expect( post('/api/tasks')).to route_to('tasks#create') }
+  it { expect( get('/api/tasks')).to route_to(controller: 'tasks', action: 'index') }
+  it { expect( post('/api/tasks')).to route_to(controller: 'tasks', action: 'create') }
+  it { expect( put('/api/tasks/1')).to route_to(controller: 'tasks', action: 'update', id: '1')}
   it { should_not_route get('/api/tasks/1') }
-  it { should_not_route put('/api/tasks/1') }
   it { should_not_route delete('/api/tasks/1') }
 end
 
@@ -56,6 +56,13 @@ RSpec.describe TasksController, type: :controller do
         its(['title']) { is_expected.to eq task_params[:title] }
         its(['done']) { is_expected.to be false }
       end
+
+      context 'new model' do
+        subject(:new_task) { Task.last }
+
+        its(:title) { is_expected.to eq task_params[:title] }
+        its(:done) { is_expected.to eq false }
+      end
     end
 
     context 'invalid attributes' do
@@ -65,6 +72,42 @@ RSpec.describe TasksController, type: :controller do
         expect {
           post 'create', params: { task: task_params }
         }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+  end
+
+  describe '#update' do
+    context 'valid update' do
+      let(:existing_task) { create :task }
+
+      let(:update_params) { Hash[ done: true ] }
+
+      before { put 'update', params: { task: update_params, id: existing_task.id } }
+
+      it { expect(response).to be_successful }
+
+      context 'response body' do
+        subject(:data) { JSON.parse(response.body) }
+
+        context 'unchanged attributes' do
+          its(['title']) { is_expected.to eq existing_task.title }
+        end
+
+        context 'changed attributes' do
+          its(['done']) { is_expected.to eq update_params[:done] }
+        end
+      end
+
+      context 'updated model' do
+        subject(:updated_model) { Task.find(existing_task.id) }
+
+        context 'unchanged attributes' do
+          its(:title) { is_expected.to eq existing_task.title }
+        end
+
+        context 'changed attributes' do
+          its(:done) { is_expected.to eq update_params[:done] }
+        end
       end
     end
   end
