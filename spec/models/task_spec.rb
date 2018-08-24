@@ -18,5 +18,17 @@ RSpec.describe Task, type: :model do
       task.save
       expect(task.done).to be true
     end
+
+    it 'should set an unset started to false' do
+      task = Task.new(title: 'A title')
+      task.save
+      expect(task.started).to be false
+    end
+
+    it 'should not override and already set started' do
+      task = Task.new(title: 'A title', started: true)
+      task.save
+      expect(task.started).to be true
+    end
   end
 end

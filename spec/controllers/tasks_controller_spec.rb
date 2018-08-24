@@ -54,14 +54,12 @@ RSpec.describe TasksController, type: :controller do
         subject(:data) { JSON.parse(response.body) }
 
         its(['title']) { is_expected.to eq task_params[:title] }
-        its(['done']) { is_expected.to be false }
       end
 
       context 'new model' do
         subject(:new_task) { Task.last }
 
         its(:title) { is_expected.to eq task_params[:title] }
-        its(:done) { is_expected.to eq false }
       end
     end
 
@@ -80,34 +78,28 @@ RSpec.describe TasksController, type: :controller do
     context 'valid update' do
       let(:existing_task) { create :task }
 
-      let(:update_params) { Hash[ done: true ] }
-
       before { put 'update', params: { task: update_params, id: existing_task.id } }
 
-      it { expect(response).to be_successful }
+      context 'uri response' do
+        let(:update_params) { Hash[ done: true ] }
 
-      context 'response body' do
-        subject(:data) { JSON.parse(response.body) }
-
-        context 'unchanged attributes' do
-          its(['title']) { is_expected.to eq existing_task.title }
-        end
-
-        context 'changed attributes' do
-          its(['done']) { is_expected.to eq update_params[:done] }
-        end
+        it { expect(response).to be_successful }
       end
 
-      context 'updated model' do
-        subject(:updated_model) { Task.find(existing_task.id) }
+      context 'allowed params' do
+        shared_examples_for :update_params do |param_key, new_value|
+          let(:update_params) { Hash[ param_key => new_value ] }
 
-        context 'unchanged attributes' do
-          its(:title) { is_expected.to eq existing_task.title }
+          subject(:data) { JSON.parse(response.body) }
+          subject(:updated_model) { Task.find(existing_task.id) }
+
+          it { expect(data[param_key.to_s]).to eq new_value }
+          it { expect(updated_model.send(param_key)).to eq new_value }
         end
 
-        context 'changed attributes' do
-          its(:done) { is_expected.to eq update_params[:done] }
-        end
+          it_behaves_like :update_params, :title, 'The new title'
+          it_behaves_like :update_params, :done, true
+          it_behaves_like :update_params, :started, true
       end
     end
   end
