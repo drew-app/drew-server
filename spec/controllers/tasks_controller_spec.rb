@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe 'TasksController routing', type: :routing do
-  def should_not_route route
+  def should_not_route(route)
     expect(route).to_not be_routable
   end
 
-  it { expect( get('/api/tasks')).to route_to(controller: 'tasks', action: 'index') }
-  it { expect( post('/api/tasks')).to route_to(controller: 'tasks', action: 'create') }
-  it { expect( put('/api/tasks/1')).to route_to(controller: 'tasks', action: 'update', id: '1')}
+  it { expect(get('/api/tasks')).to route_to(controller: 'tasks', action: 'index') }
+  it { expect(post('/api/tasks')).to route_to(controller: 'tasks', action: 'create') }
+  it { expect(put('/api/tasks/1')).to route_to(controller: 'tasks', action: 'update', id: '1') }
   it { should_not_route get('/api/tasks/1') }
   it { should_not_route delete('/api/tasks/1') }
 end
@@ -35,9 +35,9 @@ RSpec.describe TasksController, type: :controller do
       context 'task attributes' do
         let(:source_titles) { tasks.collect(&:title) }
 
-        subject(:respone_titles) { data.map { |t| t['title'] } }
+        subject(:response_titles) { data.map { |t| t['title'] } }
 
-        it { expect(respone_titles).to contain_exactly(*source_titles) }
+        it { expect(response_titles).to contain_exactly(*source_titles) }
       end
     end
   end
@@ -81,25 +81,28 @@ RSpec.describe TasksController, type: :controller do
       before { put 'update', params: { task: update_params, id: existing_task.id } }
 
       context 'uri response' do
-        let(:update_params) { Hash[ done: true ] }
+        let(:update_params) { Hash[done: true] }
 
         it { expect(response).to be_successful }
       end
 
       context 'allowed params' do
         shared_examples_for :update_params do |param_key, new_value|
-          let(:update_params) { Hash[ param_key => new_value ] }
+          let(:update_params) { Hash[param_key => new_value] }
 
+          # noinspection RubyArgCount
           subject(:data) { JSON.parse(response.body) }
+          # noinspection RubyArgCount
           subject(:updated_model) { Task.find(existing_task.id) }
 
-          it { expect(data[param_key.to_s]).to eq new_value }
-          it { expect(updated_model.send(param_key)).to eq new_value }
+          it("should update in the response for #{param_key}") { expect(data[param_key.to_s]).to eq new_value }
+          it("should update the model for #{param_key}") { expect(updated_model.send(param_key)).to eq new_value }
         end
 
-          it_behaves_like :update_params, :title, 'The new title'
-          it_behaves_like :update_params, :done, true
-          it_behaves_like :update_params, :started, true
+        it_behaves_like :update_params, :title, 'The new title'
+        it_behaves_like :update_params, :done, true
+        it_behaves_like :update_params, :started, true
+        it_behaves_like :update_params, :description, 'The new description'
       end
     end
   end
