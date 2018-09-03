@@ -8,7 +8,7 @@ RSpec.describe 'TasksController routing', type: :routing do
   it { expect(get('/api/tasks')).to route_to(controller: 'tasks', action: 'index') }
   it { expect(post('/api/tasks')).to route_to(controller: 'tasks', action: 'create') }
   it { expect(put('/api/tasks/1')).to route_to(controller: 'tasks', action: 'update', id: '1') }
-  it { should_not_route get('/api/tasks/1') }
+  it { expect(get('/api/tasks/1')).to route_to(controller: 'tasks', action: 'show', id: '1') }
   it { should_not_route delete('/api/tasks/1') }
 end
 
@@ -39,6 +39,25 @@ RSpec.describe TasksController, type: :controller do
 
         it { expect(response_titles).to contain_exactly(*source_titles) }
       end
+    end
+  end
+
+  describe '#show' do
+    context 'with no task' do
+      it 'should throw an exception' do
+        expect { get('show', params: { id: 1 }) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'with task' do
+      let!(:task) { create :task }
+
+      before { get('show', params: { id: task.id }) }
+
+      subject(:data) { JSON.parse(response.body) }
+
+      it { expect(response).to be_successful }
+      it { expect(data['title']).to eq task.title }
     end
   end
 

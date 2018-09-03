@@ -3,6 +3,10 @@ class TasksController < ApplicationController
     render json: Task.all
   end
 
+  def show
+    render json: Task.find(params[:id])
+  end
+
   def create
     task = Task.create!(create_task_params)
     render json: task
