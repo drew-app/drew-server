@@ -7,26 +7,29 @@ RSpec.describe Task, type: :model do
   end
 
   context 'defaults' do
+    let(:user) { create :user }
+    let(:default_attrs) { Hash[user: user, title: 'A title'] }
+
     it 'should set an unset done to false' do
-      task = Task.new(title: 'A title')
+      task = Task.new(default_attrs)
       task.save
       expect(task.done).to be false
     end
 
     it 'should not override an already set done' do
-      task = Task.new(title: 'A title', done: true)
+      task = Task.new(default_attrs.merge(done: true))
       task.save
       expect(task.done).to be true
     end
 
     it 'should set an unset started to false' do
-      task = Task.new(title: 'A title')
+      task = Task.new(default_attrs)
       task.save
       expect(task.started).to be false
     end
 
     it 'should not override and already set started' do
-      task = Task.new(title: 'A title', started: true)
+      task = Task.new(default_attrs.merge(started: true))
       task.save
       expect(task.started).to be true
     end

@@ -13,6 +13,12 @@ RSpec.describe 'TasksController routing', type: :routing do
 end
 
 RSpec.describe TasksController, type: :controller do
+  let(:user) { create :user }
+  let(:other_user) { create :user }
+
+  before do
+    sign_in_user user
+  end
 
   describe '#index' do
     let!(:tasks) { [] }
@@ -27,7 +33,7 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context 'with some tasks' do
-      let!(:tasks) { create_list :task, 3 }
+      let!(:tasks) { create_list :task, 3, user: user }
 
       it { expect(response).to be_successful }
       it { expect(data.length).to eq 3 }
@@ -40,6 +46,15 @@ RSpec.describe TasksController, type: :controller do
         it { expect(response_titles).to contain_exactly(*source_titles) }
       end
     end
+
+    context 'with tasks from another user' do
+      let!(:tasks) { create_list :task, 3, user: other_user }
+
+      it { expect(response).to be_successful }
+      it { expect(data).to eq [] }
+    end
+
+
   end
 
   describe '#show' do
@@ -50,7 +65,7 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context 'with task' do
-      let!(:task) { create :task }
+      let!(:task) { create :task, user: user }
 
       before { get('show', params: { id: task.id }) }
 
@@ -58,6 +73,14 @@ RSpec.describe TasksController, type: :controller do
 
       it { expect(response).to be_successful }
       it { expect(data['title']).to eq task.title }
+    end
+
+    context 'with other user\'s task' do
+      let!(:task) { create :task, user: other_user }
+
+      it 'should throw an exception' do
+        expect { get('show', params: { id: task.id }) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 
@@ -79,6 +102,7 @@ RSpec.describe TasksController, type: :controller do
         subject(:new_task) { Task.last }
 
         its(:title) { is_expected.to eq task_params[:title] }
+        its(:user) { is_expected.to eq user }
       end
     end
 
@@ -95,7 +119,7 @@ RSpec.describe TasksController, type: :controller do
 
   describe '#update' do
     context 'valid update' do
-      let(:existing_task) { create :task }
+      let(:existing_task) { create :task, user: user }
 
       before { put 'update', params: { task: update_params, id: existing_task.id } }
 
@@ -122,6 +146,26 @@ RSpec.describe TasksController, type: :controller do
         it_behaves_like :update_params, :done, true
         it_behaves_like :update_params, :started, true
         it_behaves_like :update_params, :description, 'The new description'
+      end
+    end
+
+    context 'update with invalid attributes' do
+      let(:existing_task) { create :task, user: user }
+
+      it 'should raise an error' do
+        expect {
+          put 'update', params: { task: {title: ''}, id: existing_task.id
+        } }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+
+    context 'task belongs to another user' do
+      let(:existing_task) { create :task, user: other_user }
+
+      it 'should raise an error' do
+        expect {
+          put 'update', params: { task: {title: 'Another title'}, id: existing_task.id
+        } }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

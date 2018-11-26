@@ -16,6 +16,7 @@ ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
+  config.include Test::ControllerHelpers, type: :controller
 
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
