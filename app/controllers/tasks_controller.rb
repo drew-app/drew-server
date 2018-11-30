@@ -1,30 +1,35 @@
 class TasksController < ApplicationController
   def index
-    render json: Task.all
+    render json: scope
   end
 
   def show
-    render json: Task.find(params[:id])
+    render json: scoped_object
   end
 
   def create
-    task = Task.create!(create_task_params)
-    render json: task
+    render json: scope.create!(create_params)
   end
 
   def update
-    task = Task.find(params[:id])
-    task.update_attributes(update_task_params)
-    render json: task
+    render json: scoped_object.tap { |task| task.update_attributes!(update_params) }
   end
 
   private
 
-  def create_task_params
+  def scoped_object
+    scope.find(params[:id])
+  end
+
+  def scope
+    current_user.tasks
+  end
+
+  def create_params
     params.require(:task).permit(:title)
   end
 
-  def update_task_params
+  def update_params
     params.require(:task).permit(:title, :done, :started, :description)
   end
 end

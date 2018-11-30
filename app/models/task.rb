@@ -1,4 +1,6 @@
 class Task < ApplicationRecord
+  belongs_to :user
+
   validates_presence_of :title
 
   before_create :initialize_done

@@ -59,7 +59,8 @@ GEM
       activesupport (>= 4.2.0)
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
-    loofah (2.2.3)
+    jwt (2.1.0)
+    loofah (2.2.2)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.0)
@@ -159,6 +160,7 @@ PLATFORMS
 DEPENDENCIES
   database_cleaner
   factory_bot_rails
+  jwt
   pg (>= 0.18, < 2.0)
   pry-rails
   pry-remote
