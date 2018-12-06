@@ -34,4 +34,20 @@ RSpec.describe Task, type: :model do
       expect(task.started).to be true
     end
   end
+
+  context 'as_json' do
+    let(:task) { create :task, :with_tags }
+
+    subject(:json) { task.as_json }
+
+    it 'should include the default attributes' do
+      task.attributes.each do |key, value|
+        expect(json[key]).to eq value
+      end
+    end
+
+    it 'should include the tags' do
+      expect(json['tags']).to contain_exactly *task.tags.as_json
+    end
+  end
 end

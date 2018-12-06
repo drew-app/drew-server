@@ -115,16 +115,54 @@ RSpec.describe TasksController, type: :controller do
         }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
+
+    context 'with tags' do
+      let(:task_params) { attributes_for :task }
+      let(:tag_names) { %w(home phone urgent) }
+      let!(:pre_existing_tags) { [create(:tag, name: 'home', user: user), create(:tag, name: 'phone', user: user)] }
+
+      before { post 'create', params: { task: task_params, tags: tag_names } }
+
+      it 'should create the new tag' do
+        expect(Tag.exists?(user: user, name: 'urgent')).to be true
+      end
+
+      it 'should not recreate already existing tags' do
+        expect(user.tags.count).to eq 3 #As opposed to 5
+      end
+
+      it 'should assign the task to each of the tags' do
+        user.tags.where(name: tag_names).each do |tag|
+          expect(tag.tasks.first.title).to eq task_params[:title]
+        end
+      end
+
+      it 'should assign each of the tags to the task' do
+        expect(user.tasks.first.tags.pluck(:name)).to contain_exactly(*tag_names)
+      end
+
+      context 'with different case' do
+        let(:tag_names) { %w(Home Phone UrGeNt) }
+
+        it 'should create the new tag' do
+          expect(Tag.exists?(user: user, name: 'UrGeNt')).to be true
+        end
+
+        it 'should not recreate already existing tags' do
+          expect(user.tags.count).to eq 3 #As opposed to 5
+        end
+      end
+    end
   end
 
   describe '#update' do
     context 'valid update' do
       let(:existing_task) { create :task, user: user }
 
-      before { put 'update', params: { task: update_params, id: existing_task.id } }
-
       context 'uri response' do
         let(:update_params) { Hash[done: true] }
+
+        before { put 'update', params: { task: update_params, id: existing_task.id } }
 
         it { expect(response).to be_successful }
       end
@@ -142,10 +180,38 @@ RSpec.describe TasksController, type: :controller do
           it("should update the model for #{param_key}") { expect(updated_model.send(param_key)).to eq new_value }
         end
 
+        before { put 'update', params: { task: update_params, id: existing_task.id } }
+
         it_behaves_like :update_params, :title, 'The new title'
         it_behaves_like :update_params, :done, true
         it_behaves_like :update_params, :started, true
         it_behaves_like :update_params, :description, 'The new description'
+      end
+
+      context 'with tags' do
+        let(:update_params) { Hash[done: true] }
+        let(:tag_names) { %w(home phone urgent) }
+        let!(:pre_existing_tags) { [create(:tag, name: 'home', user: user), create(:tag, name: 'phone', user: user)] }
+
+        before { put 'update', params: { task: update_params, id: existing_task.id, tags: tag_names } }
+
+        it 'should create the new tag' do
+          expect(Tag.exists?(user: user, name: 'urgent')).to be true
+        end
+
+        it 'should not recreate already existing tags' do
+          expect(user.tags.count).to eq 3 #As opposed to 5
+        end
+
+        it 'should assign the task to each of the tags' do
+          user.tags.where(name: tag_names).each do |tag|
+            expect(tag.tasks.first).to eq existing_task.reload
+          end
+        end
+
+        it 'should assign each of the tags to the task' do
+          expect(existing_task.reload.tags.pluck(:name)).to contain_exactly(*tag_names)
+        end
       end
     end
 
