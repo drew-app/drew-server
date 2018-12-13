@@ -176,11 +176,11 @@ RSpec.describe TasksController, type: :controller do
           # noinspection RubyArgCount
           subject(:updated_model) { Task.find(existing_task.id) }
 
+          before { put 'update', params: { task: update_params, id: existing_task.id } }
+
           it("should update in the response for #{param_key}") { expect(data[param_key.to_s]).to eq new_value }
           it("should update the model for #{param_key}") { expect(updated_model.send(param_key)).to eq new_value }
         end
-
-        before { put 'update', params: { task: update_params, id: existing_task.id } }
 
         it_behaves_like :update_params, :title, 'The new title'
         it_behaves_like :update_params, :done, true
@@ -212,6 +212,21 @@ RSpec.describe TasksController, type: :controller do
         it 'should assign each of the tags to the task' do
           expect(existing_task.reload.tags.pluck(:name)).to contain_exactly(*tag_names)
         end
+      end
+
+      context 'with pre-existing tags' do
+        let(:tags) { create_list :tag, 3 }
+        let(:existing_task) { create :task, user: user, done: false, tags: tags }
+        let(:update_params) { Hash[done: true] }
+
+        subject(:data) { JSON.parse(response.body) }
+        subject(:updated_model) { Task.find(existing_task.id) }
+
+        before { put 'update', params: { task: update_params, id: existing_task.id } }
+
+        it { expect(data['done']).to eq true }
+        it { expect(updated_model.done).to eq true }
+        it { expect(updated_model.tags).to contain_exactly(*tags) }
       end
     end
 

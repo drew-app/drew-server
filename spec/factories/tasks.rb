@@ -3,6 +3,7 @@ FactoryBot.define do
     user
     sequence(:title) { |n| "Task Number #{n}"}
     description ''
+    tags []
 
     trait :with_tags do
       tags { build_list(:tag, 3, user: user) }
