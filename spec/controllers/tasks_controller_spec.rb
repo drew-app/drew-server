@@ -1,15 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe 'TasksController routing', type: :routing do
-  def should_not_route(route)
-    expect(route).to_not be_routable
-  end
-
   it { expect(get('/api/tasks')).to route_to(controller: 'tasks', action: 'index') }
   it { expect(post('/api/tasks')).to route_to(controller: 'tasks', action: 'create') }
   it { expect(put('/api/tasks/1')).to route_to(controller: 'tasks', action: 'update', id: '1') }
   it { expect(get('/api/tasks/1')).to route_to(controller: 'tasks', action: 'show', id: '1') }
-  it { should_not_route delete('/api/tasks/1') }
+  it { expect(delete('/api/tasks/1')).to_not be_routable }
 end
 
 RSpec.describe TasksController, type: :controller do
