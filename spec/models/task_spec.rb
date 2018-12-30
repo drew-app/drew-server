@@ -6,6 +6,10 @@ RSpec.describe Task, type: :model do
     it { is_expected.to validate_presence_of :title }
   end
 
+  context 'associations' do
+    it { is_expected.to belong_to :user}
+  end
+
   context 'defaults' do
     let(:user) { create :user }
     let(:default_attrs) { Hash[user: user, title: 'A title'] }
