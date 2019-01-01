@@ -4,7 +4,7 @@ RSpec.describe 'TrackersController routing', type: :routing do
   it { expect(get('/api/trackers')).to route_to(controller: 'trackers', action: 'index') }
   it { expect(post('/api/trackers')).to route_to(controller: 'trackers', action: 'create') }
   it { expect(put('/api/trackers/1')).to_not be_routable }
-  it { expect(get('/api/trackers/1')).to_not be_routable }
+  it { expect(get('/api/trackers/1')).to route_to(controller: 'trackers', action: 'show', id: '1') }
   it { expect(delete('/api/trackers/1')).to_not be_routable }
 end
 
@@ -48,6 +48,33 @@ RSpec.describe TrackersController, type: :controller do
 
       it { expect(response).to be_successful }
       it { expect(data).to eq [] }
+    end
+  end
+
+  describe '#show' do
+    context 'with no tracker' do
+      it 'should throw an exception' do
+        expect { get('show', params: { id: 1 }) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'with tracker' do
+      let!(:tracker) { create :tracker, user: user }
+
+      before { get('show', params: { id: tracker.id }) }
+
+      subject(:data) { JSON.parse(response.body) }
+
+      it { expect(response).to be_successful }
+      it { expect(data['title']).to eq tracker.title }
+    end
+
+    context 'with other user\'s tracker' do
+      let!(:tracker) { create :tracker, user: other_user }
+
+      it 'should throw an exception' do
+        expect { get('show', params: { id: tracker.id }) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 

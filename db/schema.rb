@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_30_025429) do
+ActiveRecord::Schema.define(version: 2018_12_31_224509) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,6 +40,13 @@ ActiveRecord::Schema.define(version: 2018_12_30_025429) do
     t.index ["user_id"], name: "index_tasks_on_user_id"
   end
 
+  create_table "tracker_records", force: :cascade do |t|
+    t.bigint "tracker_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tracker_id"], name: "index_tracker_records_on_tracker_id"
+  end
+
   create_table "trackers", force: :cascade do |t|
     t.string "title"
     t.bigint "user_id", null: false
@@ -60,5 +67,6 @@ ActiveRecord::Schema.define(version: 2018_12_30_025429) do
 
   add_foreign_key "tags", "users"
   add_foreign_key "tasks", "users"
+  add_foreign_key "tracker_records", "trackers"
   add_foreign_key "trackers", "users"
 end

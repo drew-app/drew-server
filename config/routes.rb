@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   scope '/api' do
     resources :tasks, only: [:index, :create, :update, :show]
     resources :tags, only: [:index]
-    resources :trackers, only: [:index, :create]
+    resources :trackers, only: [:index, :create, :show] do
+      resources :tracker_records, only: [:index, :create]
+    end
   end
 end

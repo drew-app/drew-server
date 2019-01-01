@@ -3,6 +3,10 @@ class TrackersController < ApplicationController
     render json: scope
   end
 
+  def show
+    render json: scope.find(params[:id])
+  end
+
   def create
     render json: scope.create!(create_params)
   end
