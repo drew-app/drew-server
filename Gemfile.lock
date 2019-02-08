@@ -70,11 +70,11 @@ GEM
     method_source (0.9.0)
     mimemagic (0.3.2)
     mini_mime (1.0.0)
-    mini_portile2 (2.3.0)
+    mini_portile2 (2.4.0)
     minitest (5.11.3)
     nio4r (2.3.1)
-    nokogiri (1.8.5)
-      mini_portile2 (~> 2.3.0)
+    nokogiri (1.10.1)
+      mini_portile2 (~> 2.4.0)
     pg (1.0.0)
     pry (0.11.3)
       coderay (~> 1.1.0)
@@ -173,7 +173,7 @@ DEPENDENCIES
   shoulda-matchers
 
 RUBY VERSION
-   ruby 2.5.1p57
+   ruby 2.6.1p33
 
 BUNDLED WITH
-   1.16.2
+   1.17.2
