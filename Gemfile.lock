@@ -57,6 +57,7 @@ GEM
       railties (>= 3.0.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
+    graphql (1.9.3)
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
     jwt (2.1.0)
@@ -160,6 +161,7 @@ PLATFORMS
 DEPENDENCIES
   database_cleaner
   factory_bot_rails
+  graphql
   jwt
   pg (>= 0.18, < 2.0)
   pry-rails
