@@ -11,6 +11,10 @@ class TrackersController < ApplicationController
     render json: scope.create!(create_params)
   end
 
+  def destroy
+    scope.find(params[:id]).destroy
+  end
+
   private
 
   def scope
