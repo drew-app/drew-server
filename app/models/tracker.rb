@@ -1,6 +1,6 @@
 class Tracker < ApplicationRecord
   belongs_to :user
-  has_many :tracker_records
+  has_many :tracker_records, dependent: :destroy
 
   validates_presence_of :title
 

@@ -5,7 +5,7 @@ RSpec.describe 'TrackersController routing', type: :routing do
   it { expect(post('/api/trackers')).to route_to(controller: 'trackers', action: 'create') }
   it { expect(put('/api/trackers/1')).to_not be_routable }
   it { expect(get('/api/trackers/1')).to route_to(controller: 'trackers', action: 'show', id: '1') }
-  it { expect(delete('/api/trackers/1')).to_not be_routable }
+  it { expect(delete('/api/trackers/1')).to route_to(controller: 'trackers', action: 'destroy', id: '1') }
 end
 
 RSpec.describe TrackersController, type: :controller do
@@ -107,6 +107,38 @@ RSpec.describe TrackersController, type: :controller do
         expect {
           post 'create', params: { tracker: tracker_params }
         }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+  end
+
+  describe '#destroy' do
+    context 'with no tracker' do
+      it 'should throw an exception' do
+        expect { delete('destroy', params: { id: 1 }) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'with tracker' do
+      let!(:tracker) { create :tracker, user: user }
+
+      it 'should delete the tracker' do
+        expect {
+          delete('destroy', params: { id: tracker.id })
+        }.to change { Tracker.count }.from(1).to(0)
+      end
+
+      it 'should respond with 204' do
+        delete('destroy', params: { id: tracker.id })
+
+        expect(response.code).to eq('204')
+      end
+    end
+
+    context 'with other user\'s tracker' do
+      let!(:tracker) { create :tracker, user: other_user }
+
+      it 'should throw an exception' do
+        expect { delete('destroy', params: { id: tracker.id }) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
