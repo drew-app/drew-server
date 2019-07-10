@@ -30,7 +30,7 @@ class TasksController < ApplicationController
   end
 
   def update_params
-    params.require(:task).permit(:title, :done, :started, :description).tap do |update_params|
+    params.require(:task).permit(:title, :done, :focused, :description).tap do |update_params|
       update_params.merge!(tags: tags) if params[:tags].present?
     end
   end
