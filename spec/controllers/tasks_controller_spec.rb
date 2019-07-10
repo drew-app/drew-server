@@ -180,7 +180,7 @@ RSpec.describe TasksController, type: :controller do
 
         it_behaves_like :update_params, :title, 'The new title'
         it_behaves_like :update_params, :done, true
-        it_behaves_like :update_params, :started, true
+        it_behaves_like :update_params, :focused, true
         it_behaves_like :update_params, :description, 'The new description'
       end
 
