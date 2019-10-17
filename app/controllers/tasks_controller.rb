@@ -26,7 +26,7 @@ class TasksController < ApplicationController
   end
 
   def create_params
-    params.require(:task).permit(:title).merge(tags: tags)
+    params.require(:task).permit(:title, :focused).merge(tags: tags)
   end
 
   def update_params
