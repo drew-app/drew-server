@@ -11,6 +11,7 @@ test:
   <<: *default
   database: drew-app_test
   username: <%= ENV['PGUSER'] %>
+  password: <%= ENV['PGPASSWORD'] %>
 
 production:
   <<: *default
