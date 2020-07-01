@@ -1,4 +1,4 @@
-ruby '2.6.1'
+ruby '2.6.6'
 #ruby-gemset=drewapp
 
 source 'https://rubygems.org'
